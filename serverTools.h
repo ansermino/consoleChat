@@ -1,7 +1,3 @@
-//
-// Created by david on 10/17/16.
-//
-
 #ifndef CONSOLECHAT_SERVERTOOLS_H
 #define CONSOLECHAT_SERVERTOOLS_H
 
@@ -30,6 +26,16 @@
 #include <sys/signal.h>
 #include <signal.h>
 
+typedef struct Client{
+    int fd;
+    char * username;
+    struct in_addr ipaddr;
+    struct Client * next;
+}Client;
+
 static int MAX_BACKLOG_QUEUE = 5;
+
+void set_verbose(int);
+void report(char *, ...);
 
 int setup();

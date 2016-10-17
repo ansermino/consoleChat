@@ -3,5 +3,5 @@ project(consoleChat)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES consoleChat.c serverTools.c chatServer.c serverTools.h)
+set(SOURCE_FILES consoleChat.c serverTools.c chatServer.c serverTools.h chatClient.c clientTools.c)
 add_executable(consoleChat ${SOURCE_FILES})

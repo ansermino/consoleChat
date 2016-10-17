@@ -1,4 +1,7 @@
-#include "serverTools.h"
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+
 
 int verbose = 1; //TODO: Set to 0 default and implement set_verbose()
 
@@ -25,37 +28,6 @@ void report(char * msg, ...){
     }
 }
 
-int setup(void){
-    int listenfd;
-    int on = 1, status;
-    struct sockaddr_in self;
-    if((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1){
-        perror("socket");
-        exit(1);
-    }
-    status = setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (const char *) &on, sizeof(on));
-    if(status == -1) {
-        perror("setsockopt -- REUSEADDR");
-    }
-
-    self.sin_family = AF_INET;
-    self.sin_addr.s_addr = INADDR_ANY;
-    self.sin_port = htons(PORT);
-    memset(&self.sin_zero,0, sizeof(self.sin_zero));
-
-    fprintf(stderr, "Listening on port %d\n", PORT);
-
-    if(bind(listenfd, (struct sockaddr *)&self, sizeof(self)) == -1){
-        perror("bind");
-        exit(1);
-    }
-    if(listen(listenfd, MAX_BACKLOG_QUEUE) == -1){
-        perror("listen");
-        exit(1);
-    }
-    return listenfd;
-}
-
 /**
  * Read characters from 'fd' until a newline is encountered. If a newline
  * character is not encountered in the first (n - 1) bytes, then the excess
@@ -65,7 +37,8 @@ int setup(void){
  * placed in buffer (which includes the newline character if encountered,
  * but excludes the terminating null byte).
  *
- * See attribute in header file.
+ *
+ * Adapted from sample code from "Linux Programming Interface" by Michael Kerrisk.
  */
 
 ssize_t readLine(int fd, void *buffer, size_t n) {
