@@ -1,5 +1,5 @@
-#ifndef CONSOLECHAT_SERVERTOOLS_H
-#define CONSOLECHAT_SERVERTOOLS_H
+#ifndef SERVER_TOOLS_H
+#define SERVER_TOOLS_H
 
 #endif //CONSOLECHAT_SERVERTOOLS_H
 
@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/select.h>
@@ -33,7 +34,6 @@ typedef struct Client{
     struct Client * next;
 }Client;
 
-static int MAX_BACKLOG_QUEUE = 5;
 
 void set_verbose(int);
 void report(char *, ...);

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
+#include "client_tools.h"
 
 
 int verbose = 1; //TODO: Set to 0 default and implement set_verbose()

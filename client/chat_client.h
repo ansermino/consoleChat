@@ -1,0 +1,8 @@
+//
+// Created by david on 18/10/16.
+//
+
+#ifndef CONSOLECHAT_CHAT_CLIENT_H
+#define CONSOLECHAT_CHAT_CLIENT_H
+
+#endif //CONSOLECHAT_CHAT_CLIENT_H

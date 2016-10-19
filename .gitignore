@@ -1,3 +1,6 @@
 /.idea
 /CmakeLists.txt
 /.gitignore~
+/*.o
+/server/chat_server
+/client/chat_client

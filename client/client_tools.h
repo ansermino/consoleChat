@@ -1,0 +1,6 @@
+#ifndef CONSOLECHAT_CLIENT_TOOLS_H
+#define CONSOLECHAT_CLIENT_TOOLS_H
+
+#endif //CONSOLECHAT_CLIENT_TOOLS_H
+
+#include <stdarg.h>

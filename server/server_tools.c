@@ -1,4 +1,6 @@
-#include "serverTools.h"
+#include "server_tools.h"
+
+static int MAX_BACKLOG_QUEUE = 5;
 
 int verbose = 1; //TODO: Set to 0 default and implement set_verbose()
 
@@ -21,7 +23,7 @@ void report(char * msg, ...){
         vsnprintf(report, sizeof(report), msg, args);
         va_end(args);
 
-        fprintf(stderr, "%s", report);
+        fprintf(stderr, "%s\n", report);
     }
 }
 

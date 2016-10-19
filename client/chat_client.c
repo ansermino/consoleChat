@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <errno.h>
+#include "chat_client.h"
 
 
 #ifndef PORT
@@ -11,9 +12,9 @@
 #endif
 
 
-int setup(char * argv){
+int setup(char ** argv){
     int sockfd;
-    struct sockadd_in peer;
+    struct sockaddr_in peer;
 
     if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1){
         perror("client socket");
@@ -32,11 +33,12 @@ int setup(char * argv){
         perror("client: cannot connect");
         exit(1);
     }
+    return sockfd;
 }
 
-int main(int argc, char * argv){
+int main(int argc, char ** argv){
     int sockfd;
-    struct sockadd_in peer;
+    struct sockaddr_in peer;
 
     if(argc != 2){
         fprintf(stderr, "Need server address!\n");
@@ -44,12 +46,12 @@ int main(int argc, char * argv){
     }
 
     sockfd = setup(argv);
-    runClient();
+    //runClient();
 }
 
 void runClient(void){
-    chooseUsername();
-    chat();
+    //chooseUsername();
+    //chat();
 }
 
 void terminate(void){
