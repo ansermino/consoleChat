@@ -1,5 +1,5 @@
 /.idea
-/CmakeLists.txt
+/CMakeLists.txt
 /.gitignore~
 *.o
 /server/chat_server
