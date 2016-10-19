@@ -37,5 +37,6 @@ typedef struct Client{
 
 void set_verbose(int);
 void report(char *, ...);
+ssize_t readLine(int fd, void *buffer, size_t n);
 
 int setup();

@@ -42,7 +42,7 @@ void report(char * msg, ...){
  * Adapted from sample code from "Linux Programming Interface" by Michael Kerrisk.
  */
 
-ssize_t readLine(int fd, void *buffer, size_t n) {
+size_t read_line(int fd, void *buffer, size_t n) {
     ssize_t numRead;                    /* # of bytes fetched by last read() */
     size_t totRead;                     /* Total bytes read so far */
     char *buf;

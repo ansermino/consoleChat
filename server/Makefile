@@ -1,5 +1,5 @@
 PORT= 59248
-CFLAGS= -DPORT=\$(PORT) -g -Wall -std=c99 //-Werror
+CFLAGS= -DPORT=\$(PORT) -g -Wall -std=c99 #-Werror
 
 chat_server: chat_server.o server_tools.o
 		gcc $(CFLAGS) -o chat_server chat_server.o server_tools.o

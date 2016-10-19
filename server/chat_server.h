@@ -11,4 +11,6 @@ void new_connection();
 
 void create_client (int fd, struct in_addr ipaddr);
 
-void shutdownServer();
+void process_client(Client * c);
+
+void shutdown_server();
