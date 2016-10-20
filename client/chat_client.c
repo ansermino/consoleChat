@@ -79,6 +79,9 @@ void write_to_server(char * msg){
     if(write(sockfd, msg, write_size) != write_size){
         perror("write failed");
     }
+    char * end_of_line = "\r\n";
+    write(sockfd,end_of_line, sizeof(end_of_line));
+    report("Sent: %s\n", msg);
 }
 
 void terminate(void){
