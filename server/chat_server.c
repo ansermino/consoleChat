@@ -16,6 +16,9 @@ int main(void){
 
 
     listenfd = setup();
+    struct timeval tout;
+    tout.tv_usec = 0;
+    tout.tv_sec = 5;
 
     while(1){
         fd_set fds;
@@ -29,7 +32,7 @@ int main(void){
                 max_fd = c->fd;
             }
         }
-        if(select(max_fd + 1, &fds, NULL, NULL, 0) < 0){
+        if(select(max_fd + 1, &fds, NULL, NULL, &tout) < 0){
             perror("select");
         }
         else{
@@ -72,8 +75,74 @@ void create_client (int fd, struct in_addr ipaddr){
 
 void process_client(Client * c){
     char * buffer = malloc(MAX_READ_BUFFER);
-    readLine(c->fd, buffer, MAX_READ_BUFFER);
-    fprintf(stderr, "Line read: %s", buffer);
+    if(readLine(c->fd, buffer, MAX_READ_BUFFER)== 0){
+		remove_client(c);
+		return;
+    }
+	report("Line read: %s", buffer);
+	if(strcmp(buffer, ":exit") == 0){
+	    client_exit(c);
+	}
+	else{
+		client_receive_msg(c, buffer);
+	}
+
+}
+
+void client_exit(Client * c){
+	report("Client %s is exiting.", c->username);
+	char * username = malloc(sizeof(c->username));
+	strcpy(username, c->username);
+	remove_client(c);
+	broadcast("A user has left the chat.");
+	free(username);
+}
+
+void client_receive_msg(Client * c, char * buffer){
+	report("%s said: %s", c->username, buffer);
+	broadcast_except(c, buffer);
+}
+
+//TODO: Allow string format modifiers
+void broadcast(char * msg){
+	report("Broadcasting: %s", msg);
+	Client * c = top_c;
+	while(c != NULL){
+		write(c->fd, msg, sizeof(msg));
+		c = c->next;
+	}
+}
+
+void broadcast_except(Client * exception, char * msg){
+	report("Broadcasting(except %s): %s)", exception->username, msg);
+	Client * c = top_c;
+	while(c != NULL){
+		if(c != exception){
+			write(c->fd, msg, sizeof(msg));
+		}
+		c = c->next;
+	}
+}
+
+void remove_client(Client * c){
+	Client * prev = top_c;
+	Client * next = top_c->next;
+	if(prev == c){
+		top_c = next;
+		free(c);
+		return;
+	}
+	while(next != NULL && next != c){
+		prev = next;
+		next = prev->next;
+	}
+	if(next == c){
+		prev->next = next->next;
+		free(c);
+	}
+	else{
+		report("Error removing client. Client not found.\n");
+	}
 }
 
 void shutdown_server(){

@@ -13,4 +13,14 @@ void create_client (int fd, struct in_addr ipaddr);
 
 void process_client(Client * c);
 
+void client_exit(Client * c);
+
+void client_receive_msg(Client * c, char * buffer);
+
+void broadcast(char * msg);
+
+void broadcast_except(Client * c, char * msg);
+
+void remove_client(Client * c);
+
 void shutdown_server();

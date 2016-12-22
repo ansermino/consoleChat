@@ -69,7 +69,6 @@ int setup(void){
  *
  * See attribute in header file.
  */
-
 ssize_t readLine(int fd, void *buffer, size_t n) {
     ssize_t numRead;                    /* # of bytes fetched by last read() */
     size_t totRead;                     /* Total bytes read so far */
@@ -110,9 +109,9 @@ ssize_t readLine(int fd, void *buffer, size_t n) {
         }
     }
     buf--;
-    buf--;
+    //buf--;
     *buf = '\0';
-    report("Read successful.\n");
+    report("Read successful.");
 
     return totRead - 2;
 }
