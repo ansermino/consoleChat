@@ -1,7 +1,3 @@
-//
-// Created by david on 18/10/16.
-//
-
 #ifndef CONSOLECHAT_CHAT_CLIENT_H
 #define CONSOLECHAT_CHAT_CLIENT_H
 
@@ -18,6 +14,6 @@
 #include <errno.h>
 #include <sys/select.h>
 
-void write_to_server(char * msg);
-void run_client(void);
-void chat();
+void read_stdin();
+void write_to_server(char * text);
+

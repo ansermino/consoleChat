@@ -84,7 +84,7 @@ size_t read_line(int fd, void *buffer, size_t n) {
     buf--;
     buf--;
     *buf = '\0';
-    report("Read successful.\n");
+    report("Read successful(%d).", totRead);
 
     return totRead - 2;
 }

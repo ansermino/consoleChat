@@ -58,6 +58,17 @@ int setup(void){
     return listenfd;
 }
 
+int find_network_newline(char * str){
+	int i = 0;
+	while(i < strlen(str) - 1){
+		if((str[i] == '\r') && (str[i+1] == '\n')){
+			return i;
+		}
+		i++;
+	}
+	return -1;	
+}
+
 /**
  * Read characters from 'fd' until a newline is encountered. If a newline
  * character is not encountered in the first (n - 1) bytes, then the excess
