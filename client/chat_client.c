@@ -84,18 +84,16 @@ void create_data_buffer(){
 }
 
 void set_username(){ 
-	fprintf(stderr, "Enter user name: ");
 	char buffer[MAX_READ_BUFFER];
 	int end = 0;
-	/*do{
-		printf("Enter a username: ");
+	do{
+		fprintf(stderr, "Enter a username: ");
 		end = read(STDIN_FILENO, &buffer, MAX_READ_BUFFER - 1 );
-	}while(end == 0);*/
-	end = read(STDIN_FILENO, &buffer, MAX_READ_BUFFER - 1 );
+	}while(end <= 1);
 	buffer[end - 1] = '\0'; // -1 to ignore the newline
 	username = malloc(end);
 	strcpy(username, buffer);
-	report("Username: %s", username);
+	report("Your username is %s.", username);
 	write_to_server(username);
 }
 
