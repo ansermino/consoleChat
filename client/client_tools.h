@@ -13,5 +13,12 @@
 #include <errno.h>
 #include <sys/select.h>
 
+typedef struct DataBuffer{
+		char * buffer;
+		int fd;
+		int in_buffer;
+} DataBuffer;
+
 void report(char * msg, ...);
-size_t read_line(int fd, void *buffer, size_t n);
+int find_network_newline(DataBuffer * d);
+int read_line(DataBuffer * db);

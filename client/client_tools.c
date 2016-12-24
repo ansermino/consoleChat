@@ -5,6 +5,7 @@
 
 
 int verbose = 1; //TODO: Set to 0 default and implement set_verbose()
+static int MAX_READ_BUFFER = 2048;
 
 /**
  * Set verbose to true(!0) or false(0)
@@ -25,66 +26,45 @@ void report(char * msg, ...){
         vsnprintf(report, sizeof(report), msg, args);
         va_end(args);
 
-        fprintf(stderr, "%s", report);
+        fprintf(stderr, "%s\n", report);
     }
 }
 
-/**
- * Read characters from 'fd' until a newline is encountered. If a newline
- * character is not encountered in the first (n - 1) bytes, then the excess
- * characters are discarded. The returned string placed in 'buf' is
- * null-terminated and includes the newline character if it was read in the
- * first (n - 1) bytes. The function return value is the number of bytes
- * placed in buffer (which includes the newline character if encountered,
- * but excludes the terminating null byte).
- *
- *
- * Adapted from sample code from "Linux Programming Interface" by Michael Kerrisk.
- */
-
-size_t read_line(int fd, void *buffer, size_t n) {
-    ssize_t numRead;                    /* # of bytes fetched by last read() */
-    size_t totRead;                     /* Total bytes read so far */
-    char *buf;
-    char ch;
-
-    if (n <= 0 || buffer == NULL) {
-        errno = EINVAL;
-        return -1;
-    }
-
-    buf = buffer;                       /* No pointer arithmetic on "void *" */
-
-    totRead = 0;
-    for (;;) {
-        numRead = read(fd, &ch, 1);
-
-        if (numRead == -1) {
-            if (errno == EINTR)         /* Interrupted --> restart read() */
-                continue;
-            else
-                return -1;              /* Some other error */
-
-        } else if (numRead == 0) {      /* EOF */
-            if (totRead == 0)           /* No bytes read; return 0 */
-                return 0;
-            else                        /* Some bytes read; add '\0' */
-                break;
-
-        } else {                        /* 'numRead' must be 1 if we get here */
-            if (totRead < n - 1) {      /* Discard > (n - 1) bytes */
-                totRead++;
-                *buf++ = ch;
-            }
-
-            if (ch == '\n')
-                break;
-        }
-    }
-    buf--;
-    buf--;
-    *buf = '\0';
-    report("Read successful(%d).", totRead);
-
-    return totRead - 2;
+int find_network_newline(DataBuffer  * d){
+	int i = 0;
+	while(i < d->in_buffer - 1){
+		if((d->buffer[i] == '\r') && (d->buffer[i + 1] == '\n')){
+			return i;
+		}
+		i++;
+	}
+	return -1;
 }
+
+int read_line(DataBuffer * d){
+	char * insert_ptr = d->buffer + d->in_buffer;
+	int buffer_space = MAX_READ_BUFFER - d->in_buffer;
+	int read_size;
+	if((read_size = read(d->fd, insert_ptr, buffer_space)) >= 0){
+		d->in_buffer += read_size;
+		if(read_size == 0){
+			//TODO: Shutdown client
+		}
+		int newline_index = find_network_newline(d);
+		if(newline_index >= 0){
+			d->buffer[newline_index] = '\0';
+			d->buffer[newline_index + 1] = '\0';
+			char data[newline_index + 1];
+			strcpy(data, d->buffer);
+			printf("%s\n", data);
+			newline_index += 2;
+			d->in_buffer -= newline_index;
+			memmove(d->buffer, d->buffer + newline_index, d->in_buffer);
+		}
+	}
+	else{
+		perror("server read");
+	}
+	return read_size;
+}
+

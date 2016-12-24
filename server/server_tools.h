@@ -31,9 +31,9 @@ typedef struct Client{
     int fd;
     char * username;
 	char * buffer;
-	int insert_index;
-	int buf_size;
-	int max_read;
+	int in_buffer; 
+	int buffer_space; //May not need this
+	int max_read; //May not need
     struct in_addr ipaddr;
     struct Client * next;
 }Client;
@@ -41,7 +41,8 @@ typedef struct Client{
 
 void set_verbose(int);
 void report(char *, ...);
-int find_network_newline(char * str);
+int find_network_newline(char * str, int in_buffer);
+void diagnostic_buffer_print(char * buf);
 ssize_t readLine(int fd, void *buffer, size_t n);
 
 int setup();

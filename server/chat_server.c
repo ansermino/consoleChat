@@ -68,9 +68,7 @@ void create_client (int fd, struct in_addr ipaddr){
     Client * c = malloc(sizeof(Client));
 	c->username = malloc(10); //TODO: Replace
 	c->buffer = malloc(MAX_READ_BUFFER);
-	c->buf_size = MAX_READ_BUFFER;
-	c->insert_index = 0;
-	c->max_read = MAX_READ_BUFFER;
+	c->in_buffer = 0;
     c->fd = fd;
     c->ipaddr = ipaddr;
     c->next = top_c;
@@ -80,29 +78,35 @@ void create_client (int fd, struct in_addr ipaddr){
 
 void process_incoming_data(Client * c){
 	report("Processing incoming data...");
+	char * insert_ptr = c->buffer + c->in_buffer;
+	int buffer_space = MAX_READ_BUFFER - c->in_buffer;
 	int read_size;
-	if((read_size = read(c->fd, &c->buffer[c->insert_index], c->max_read))< 0){
-		perror("read client");
+	if((read_size = read(c->fd, insert_ptr, buffer_space)) >= 0){
+		c->in_buffer += read_size;
+		if(read_size == 0){
+			remove_client(c);
+			return;
+		}
+		int newline_index = find_network_newline(c->buffer, c->in_buffer);
+		if(newline_index >= 0){
+			report("Complete client request recieved.");
+			c->buffer[newline_index] = '\0';
+			c->buffer[newline_index + 1] = '\0';
+			char cmd[newline_index + 1];
+			strcpy(cmd, c->buffer);
+			process_cmd(c, cmd);
+			newline_index += 2;
+			c->in_buffer -= newline_index;
+			memmove(c->buffer, c->buffer + newline_index, c->in_buffer);
+		}
 	}
-	if(read_size == 0){
-		remove_client(c);
-		return;
-	}
-	report("Read %d chars.", read_size);
-	int newline_index;
-	char * cmd;
-	while((newline_index = find_network_newline(c->buffer)) > -1){
-		report("New line at %d.", newline_index);
-		cmd = malloc(newline_index + 1);
-		memcpy(cmd, c->buffer, newline_index);
-		cmd[newline_index] = '\0';
-		process_cmd(c, cmd);
-	}
-	report("New more newlines (%d).", newline_index);
-	
+	else{
+		perror("client read");
+	}	
 }
 
 void process_cmd(Client * c, char * cmd){
+	report("Processing command...");
 	if(strcmp(cmd, ":exit") == 0){
 	    client_exit(c);
 	}
@@ -125,6 +129,7 @@ void client_receive_msg(Client * c, char * cmd){
 	if(strcmp(c->username, "") == 0){
 		strncpy(c->username, cmd, 10);
 		c->username[9] = '\0';
+		broadcast_except(c, "%s has joined the chat.", c->username);
 		return;
 	}
 	report("%s said: %s", c->username, cmd);

@@ -7,6 +7,8 @@
 
 static int sockfd;
 static int MAX_READ_BUFFER = 2048;
+static char * username;
+static DataBuffer * db;
 
 
 int setup(char ** argv){
@@ -42,6 +44,10 @@ int main(int argc, char ** argv){
 
     sockfd = setup(argv);
 
+	create_data_buffer();
+
+	set_username();
+
 	struct timeval tout;
 	tout.tv_usec = 0;
 	tout.tv_sec = 5;
@@ -59,19 +65,41 @@ int main(int argc, char ** argv){
 			} 
             if(FD_ISSET(sockfd, &fds)){
                 char * buffer = malloc(MAX_READ_BUFFER);
-                if(read_line(sockfd, buffer, MAX_READ_BUFFER) == 0){
+                if(read_line(db) == 0){ 
 						report("Server has quit.");
 						exit(0);
 				}
-				fprintf(stderr, "%s\n", buffer);
+				fprintf(stderr, "%s", buffer);
             }
         }
 
     }	
 }
 
+void create_data_buffer(){
+	db = malloc(sizeof(DataBuffer));
+	db->buffer = malloc(MAX_READ_BUFFER);
+	db->in_buffer = 0;
+	db->fd = sockfd;
+}
+
+void set_username(){
+	fprintf(stderr, "Enter user name: ");
+	char buffer[MAX_READ_BUFFER];
+	int end = 0;
+	/*do{
+		printf("Enter a username: ");
+		end = read(STDIN_FILENO, &buffer, MAX_READ_BUFFER - 1 );
+	}while(end == 0);*/
+	end = read(STDIN_FILENO, &buffer, MAX_READ_BUFFER - 1 );
+	buffer[end - 1] = '\0'; // -1 to ignore the newline
+	username = malloc(end);
+	strcpy(username, buffer);
+	report("Username: %s", username);
+	write_to_server(username);
+}
+
 void read_stdin(){
-	report("Reading from stdin...");
 	char buffer[MAX_READ_BUFFER];
 	int end; 
 	if((end = read(STDIN_FILENO, &buffer, MAX_READ_BUFFER - 1)) < 0){
@@ -80,19 +108,18 @@ void read_stdin(){
 	if(end == 0){ //TODO: Does this work to ignore empty messages?
 		return;
 	}
-	buffer[end] = '\0';
-	report("%s\n", buffer);
+	buffer[end - 1] = '\0'; // -1 to ignore newline
 	write_to_server(buffer);
 }
 
 void write_to_server(char * text){
-	char * msg = malloc(sizeof(text) + 2);
+	char * msg = malloc(strlen(text) + 2);
 	strcat(msg, text);
 	strcat(msg, "\r\n");
-    if(write(sockfd, msg, sizeof(msg)) != sizeof(msg)){
+	int write_size;
+    if((write_size = write(sockfd, msg, strlen(msg)) != strlen(msg))){
         perror("write failed");
     }
-    report("Sent: %s", msg);
 }
 
 void terminate(void){

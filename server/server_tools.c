@@ -1,6 +1,7 @@
 #include "server_tools.h"
 
 static int MAX_BACKLOG_QUEUE = 5;
+static int MAX_READ_BUFFER = 2048; //For diagnostics only
 
 int verbose = 1; //TODO: Set to 0 default and implement set_verbose()
 
@@ -58,9 +59,9 @@ int setup(void){
     return listenfd;
 }
 
-int find_network_newline(char * str){
+int find_network_newline(char * str, int in_buffer){
 	int i = 0;
-	while(i < strlen(str) - 1){
+	while(i < in_buffer	- 1){
 		if((str[i] == '\r') && (str[i+1] == '\n')){
 			return i;
 		}
@@ -68,6 +69,24 @@ int find_network_newline(char * str){
 	}
 	return -1;	
 }
+
+void diagnostic_buffer_print(char * buf){
+	for(int i = 0; i < 50; i++){
+		if(buf[i] == '\n'){
+			fprintf(stderr, "\\n");
+		}
+		else if(buf[i] == '\r'){
+			fprintf(stderr, "\\r");
+		}
+		else if(buf[i] == '\0'){
+			fprintf(stderr, "\\0");
+		}
+		else{
+			fprintf(stderr, "%c", buf[i]);
+		}
+	}
+	fprintf(stderr, "\n");
+}	
 
 /**
  * Read characters from 'fd' until a newline is encountered. If a newline

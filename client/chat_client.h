@@ -15,5 +15,7 @@
 #include <sys/select.h>
 
 void read_stdin();
+void create_data_buffer();
+void set_username();
 void write_to_server(char * text);
 
