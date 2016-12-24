@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <sys/select.h>
 
+void display_header();
 void read_stdin();
 void create_data_buffer();
 void set_username();
