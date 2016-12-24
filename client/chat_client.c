@@ -83,7 +83,7 @@ void create_data_buffer(){
 	db->fd = sockfd;
 }
 
-void set_username(){ //Ignore this comment
+void set_username(){ 
 	fprintf(stderr, "Enter user name: ");
 	char buffer[MAX_READ_BUFFER];
 	int end = 0;
