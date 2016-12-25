@@ -4,15 +4,15 @@ A simple command line chat client and server written in C.
 
 ## Installation
 
-First clone the repository with `git clone https://github.com/asnermino/consoleChat`.
+First clone the repository with `git clone https://github.com/ansermino/consoleChat`.
 
 ### Server
 
-Run `make` from inside `consoleChat/server`. By default `make` will set the port number to 59248. To specifiy the port for incoming connections run `make PORT=####` where `####` is your desired port number.  
+Run `make` from inside `consoleChat/server`. By default `make` will set the port number to 59248. To specify the port for incoming connections run `make PORT=####` where `####` is your desired port number.  
 
 ### Client
 
-Run `make` from inside `consoleChat/client`. By default `make` will set the port number to 59248. To specifiy the port of the server run`make PORT=####` where `####` is your desired port number.  
+Run `make` from inside `consoleChat/client`. By default `make` will set the port number to 59248. To specify the port of the server run `make PORT=####` where `####` is your desired port number.  
 
 ## Running server
 
