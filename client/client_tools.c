@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include "client_tools.h"
 
+#define COLOUR "\x1B[32m"
+#define RESET "\x1B[0m"
+
 
 int verbose = 1; //TODO: Set to 0 default and implement set_verbose()
 static int MAX_READ_BUFFER = 2048;
@@ -56,7 +59,7 @@ int read_line(DataBuffer * d){
 			d->buffer[newline_index + 1] = '\0';
 			char data[newline_index + 1];
 			strcpy(data, d->buffer);
-			printf("%s\n", data);
+			printf(COLOUR "%s" RESET "\n", data);
 			newline_index += 2;
 			d->in_buffer -= newline_index;
 			memmove(d->buffer, d->buffer + newline_index, d->in_buffer);

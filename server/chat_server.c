@@ -1,9 +1,14 @@
 #include "server_tools.h"
 #include "chat_server.h"
 
+#define BLUE "\x1B[34m"
+#define RESET "\x1B[0m"
+
 static int MAX_READ_BUFFER = 2048;
 
 static int listenfd;
+
+const char * clr = BLUE;
 
 Client * top_c;
 
@@ -71,6 +76,7 @@ void create_client (int fd, struct in_addr ipaddr){
 	c->in_buffer = 0;
     c->fd = fd;
     c->ipaddr = ipaddr;
+	c->colour = "\x1B[34m"; //get_colour(); //\x1B[34m
     c->next = top_c;
     top_c = c;
     report("Client struct created.");
@@ -106,7 +112,9 @@ void process_incoming_data(Client * c){
 }
 
 void process_cmd(Client * c, char * cmd){
+	fprintf(stderr, "%s", c->colour);
 	report("Processing command...");
+	fprintf(stderr, RESET);
 	if(strcmp(cmd, ":exit") == 0){
 	    client_exit(c);
 	}

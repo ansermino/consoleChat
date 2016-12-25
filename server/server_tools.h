@@ -35,6 +35,7 @@ typedef struct Client{
 	int buffer_space; //May not need this
 	int max_read; //May not need
     struct in_addr ipaddr;
+	char * colour;
     struct Client * next;
 }Client;
 
@@ -43,6 +44,7 @@ void set_verbose(int);
 void report(char *, ...);
 int find_network_newline(char * str, int in_buffer);
 void diagnostic_buffer_print(char * buf);
+char * get_colour();
 ssize_t readLine(int fd, void *buffer, size_t n);
 
 int setup();

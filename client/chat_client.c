@@ -70,7 +70,7 @@ int main(int argc, char ** argv){
 						report("Server has quit.");
 						exit(0);
 				}
-				fprintf(stderr, "%s", buffer);
+				fprintf(stderr,"%s", buffer);
             }
         }
 

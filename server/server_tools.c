@@ -1,7 +1,9 @@
 #include "server_tools.h"
 
+#define RESET "\x1B[0m"
+#define BLUE "\x1B[0m34"
+
 static int MAX_BACKLOG_QUEUE = 5;
-static int MAX_READ_BUFFER = 2048; //For diagnostics only
 
 int verbose = 1; //TODO: Set to 0 default and implement set_verbose()
 
@@ -86,7 +88,14 @@ void diagnostic_buffer_print(char * buf){
 		}
 	}
 	fprintf(stderr, "\n");
-}	
+}
+
+char * get_colour(){
+	char * colour = malloc(strlen(BLUE) + 1);
+	report("length of blue %d", strlen(BLUE));
+	strcpy(colour, BLUE);
+	return colour;
+}
 
 /**
  * Read characters from 'fd' until a newline is encountered. If a newline
